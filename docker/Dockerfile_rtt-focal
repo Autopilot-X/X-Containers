@@ -37,8 +37,10 @@ RUN cd /tools/jlink && tar zxf JLink_Linux_V722_i386.tgz --strip 1 \
 RUN ln -s /usr/bin/ccache /usr/lib/ccache/arm-none-eabi-g++ \
 	&& ln -s /usr/bin/ccache /usr/lib/ccache/arm-none-eabi-gcc
 
+# Add XAP_DEV_DOCKER to indicate we are in the docker container
 ENV XAP_GCC_COMPILER="/tools/gcc/bin/arm-none-eabi-gcc" \
 	XAP_GCC_PATH="/tools/gcc/bin" \
 	XAP_GDB_PATH="/tools/gcc/bin/arm-none-eabi-gdb" \
 	XAP_GDB_SERVER_PATH="/tools/jlink/JLinkGDBServerCLExe" \
-	XAP_JLINK_PATH="/tools/jlink/JLinkExe"
+	XAP_JLINK_PATH="/tools/jlink/JLinkExe" \
+	XAP_DEV_DOCKER="true"
