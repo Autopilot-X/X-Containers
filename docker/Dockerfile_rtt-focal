@@ -1,0 +1,44 @@
+#
+# XAP rt-thread development environment in Ubuntu 20.04 Focal
+#
+
+FROM xapdevteam/xap-dev-base-focal
+LABEL maintainer="Zhang Jianfei <zhangjianfei2005@126.com>"
+
+RUN apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
+		file \
+		genromfs \
+		vim-common \
+		qemu-system-arm \
+		libncurses-dev \
+		libncurses5 \
+	&& apt-get -y autoremove \
+	&& apt-get clean autoclean \
+	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/*
+
+# Install SCons.
+RUN python3 -m pip install scons==4.0 jinja2 -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# GNU Arm Embedded Toolchain: 10.3-2021.10 Released: October 21, 2021
+RUN mkdir -p /tools/gcc && cd /tools/gcc \
+	&& wget -qO- "https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2" | tar jx --strip 1 \
+	&& rm -rf /tools/gcc/share/doc
+
+ENV PATH="$PATH:/tools/gcc/bin"
+
+# GNU Arm Embedded Toolchain: 10.3-2021.10 Released: October 21, 2021
+RUN mkdir -p /tools/jlink
+COPY packages/JLink_Linux_V722_i386.tgz /tools/jlink/JLink_Linux_V722_i386.tgz
+RUN cd /tools/jlink && tar zxf JLink_Linux_V722_i386.tgz --strip 1 \
+	&& rm -rf /tools/jlink/Doc
+
+# manual ccache setup for arm-none-eabi-g++/arm-none-eabi-gcc
+RUN ln -s /usr/bin/ccache /usr/lib/ccache/arm-none-eabi-g++ \
+	&& ln -s /usr/bin/ccache /usr/lib/ccache/arm-none-eabi-gcc
+
+ENV XAP_GCC_COMPILER="/tools/gcc/bin/arm-none-eabi-gcc" \
+	XAP_GCC_PATH="/tools/gcc/bin" \
+	XAP_GDB_PATH="/tools/gcc/bin/arm-none-eabi-gdb" \
+	XAP_GDB_SERVER_PATH="/tools/jlink/JLinkGDBServerCLExe" \
+	XAP_JLINK_PATH="/tools/jlink/JLinkExe"
