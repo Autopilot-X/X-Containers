@@ -1,0 +1,28 @@
+#
+# X-Ros base enviroment
+#
+
+FROM osrf/ros:humble-desktop-full
+LABEL maintainer="Zhang Jianfei <zhangjianfei2005@126.com>"
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
+# create user with id 1001 (jenkins docker workflow default)
+RUN useradd --shell /bin/bash -u 1001 -c "" -m user && usermod -a -G dialout user
+
+# setup virtual X server
+RUN mkdir /tmp/.X11-unix && \
+	chmod 1777 /tmp/.X11-unix && \
+	chown -R root:root /tmp/.X11-unix
+ENV DISPLAY :99
+
+ENV TERM=xterm
+ENV TZ=UTC-8
+
+# create and start as LOCAL_USER_ID
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["sh", "/usr/local/bin/entrypoint.sh"]
+
+CMD ["/bin/bash"]

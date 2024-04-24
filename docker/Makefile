@@ -8,6 +8,9 @@ xap-dev-base-focal:
 xap-dev-rtt-focal: xap-dev-base-focal
 	docker build -t xapdevteam/xap-dev-rtt-focal . -f Dockerfile_rtt-focal
 
+xros-base-humble-desktop-x64:
+	docker build --progress=plain -t xapdevteam/xros-base-humble-desktop-x64 . -f Dockerfile_xros-base-humble-desktop-x64 --no-cache
+
 # .PHONY: px4-dev-armhf, px4-dev-base-archlinux, px4-dev-base-bionic, \
 # 		px4-dev-base-focal, px4-dev-clang, px4-dev-nuttx-bionic, \
 # 		px4-dev-nuttx-focal, px4-dev-nuttx-clang, px4-dev-raspi, \
