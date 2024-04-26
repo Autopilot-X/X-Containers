@@ -1,0 +1,20 @@
+#
+# XAP ROS Development Environment with Papyros-Robotics
+#
+
+FROM xapdevteam/xros-humble-desktop-x64
+LABEL maintainer="Zhang Jianfei <zhangjianfei2005@126.com>"
+
+RUN adduser user sudo
+
+# Eclipse Papyrus Robotics RCP Toolchain: 2023-12 release (6.6.0) For Linux
+# https://eclipse.dev/papyrus/download.html#accordion
+RUN mkdir -p /tools/papyrus-robotics
+COPY /docker/packages/papyrus-robotics.tar.xz /tools/papyrus-robotics
+RUN cd /tools/papyrus-robotics && tar xf papyrus-robotics.tar.xz --strip 1
+
+# Create Papyros Robotics Workspace
+RUN mkdir -p /home/user/workspace
+
+ENV PATH="$PATH:/tools/papyrus-robotics"
+

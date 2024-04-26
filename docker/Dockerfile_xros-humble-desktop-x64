@@ -9,8 +9,9 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-# create user with id 1001 (jenkins docker workflow default)
-RUN useradd --shell /bin/bash -u 1001 -c "" -m user && usermod -a -G dialout user
+# create user with id 1000 (same with host user)
+RUN useradd --shell /bin/bash -u 1000 -c "" -m user && usermod -a -G dialout user
+RUN echo "user:1" | chpasswd && adduser user sudo
 
 # setup virtual X server
 RUN mkdir /tmp/.X11-unix && \
@@ -22,7 +23,7 @@ ENV TERM=xterm
 ENV TZ=UTC-8
 
 # create and start as LOCAL_USER_ID
-COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["sh", "/usr/local/bin/entrypoint.sh"]
+COPY docker/scripts/xros_entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/entrypoint.sh"]
 
-CMD ["/bin/bash"]
+CMD [ "/bin/bash" ]
